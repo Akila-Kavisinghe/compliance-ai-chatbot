@@ -54,11 +54,11 @@ When responding:
 - Maintain a helpful, conversational tone throughout
 `;
 
-export async function interpretMessage(content: string): Promise<string> {
+export async function interpretMessage(history: { role: ChatRole, content: string }[], content: string): Promise<string> {
     const response = await generateText({
         model,
         system: systemPrompt,
-        messages: [{ role: ChatRole.USER, content: content }]
+        messages: [...history, { role: ChatRole.USER, content: content }]
     });
 
     return response.text;

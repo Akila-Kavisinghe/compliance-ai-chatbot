@@ -86,6 +86,21 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
     const interpretChat = async (assistantID: string, content: string) => {
         try {
             setIsLoading(true)
+
+            // Get the history of messages in current conversation
+            const history = messages.map(msg => {
+                if (isChatMessage(msg)) {
+                    return { role: msg.role, content: msg.content }
+                } else if (isFileMessage(msg)) {
+                    const piiDetails = msg.pii.map(pii => 
+                        `${pii.type}, ${pii.value}, Page ${pii.page}`
+                    ).join(';')
+                    return { 
+                        role: ChatRole.ASSISTANT, 
+                        content: `File: ${msg.file.name}; Found PII: ${piiDetails}`
+                    }
+                }
+            })
             // Add initial assistant message with loading state
             const assistantMessage: ChatMessage = {
                 id: assistantID,
@@ -99,7 +114,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
 
             const response = await fetch('/api/interpret/message', {
                 method: 'POST',
-                body: JSON.stringify({ content })
+                body: JSON.stringify({ history, content })
             })
 
             if (response.ok) {
