@@ -1,32 +1,53 @@
+export enum MessageType {
+    FILE = 'file',
+    CHAT = 'chat'
+}
+
 // Base message type
 export type BaseMessage = {
     id: string
     timestamp: number
     error?: string
     isLoading?: boolean
-  }
-  
-  export enum MessageType {
-    FILE = 'file',
-    CHAT = 'chat'
-  }
-  
-  export enum ChatRole {
-      USER = 'user',
-      ASSISTANT = 'assistant'
-  }
-  
-  // Chat message type
-  export type ChatMessage = BaseMessage & {
+}
+
+export enum PIIType {
+    EMAIL = 'EMAIL',
+    PHONE = 'PHONE',
+    SOCIAL_SECURITY = 'SOCIAL_SECURITY',
+    CREDIT_CARD = 'CREDIT_CARD',
+    NAME = 'NAME'
+}
+export type PII = {
+    value: string,
+    type: PIIType,
+    page: number,
+}
+// File message type
+export type FileMessage = BaseMessage & {
+    type: MessageType.FILE
+    file: File
+    pii: PII[]
+}
+
+export enum ChatRole {
+    USER = 'user',
+    ASSISTANT = 'assistant'
+}
+// Chat message type
+export type ChatMessage = BaseMessage & {
     type: MessageType.CHAT
     content: string
     role: ChatRole
-  }
-  
-  // Union type for all message types
-  export type Message = ChatMessage
-  
-  export const isChatMessage = (message: Message): message is ChatMessage => {
+}
+
+// Union type for all message types
+export type Message = FileMessage | ChatMessage
+
+// Type guard functions
+export const isFileMessage = (message: Message): message is FileMessage => {
+    return message.type === 'file'
+}
+export const isChatMessage = (message: Message): message is ChatMessage => {
     return message.type === 'chat'
-  }
-  
+}
