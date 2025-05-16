@@ -49,16 +49,27 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
     const interpretFile = async (userID: string, assistantID: string, file: File) => {
         try {
             setIsLoading(true)
-            // TODO: Replace with API call
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            const result: PII[] = [{ value: 'test@test.com', type: PIIType.EMAIL, page: 1 }, { value: '1234567890', type: PIIType.PHONE, page: 1 }]
-            setMessages(prev =>
-                prev.map(msg =>
-                    msg.id === assistantID
-                        ? { ...msg, pii: result ?? [], isLoading: false }
-                        : msg
+            const formData = new FormData()
+            formData.append('file', file)
+            const response = await fetch('/api/interpret/file', {
+                method: 'POST',
+                body: formData
+            })
+
+            if (response.ok) {
+                const result = await response.json()
+                setMessages(prev =>
+                    prev.map(msg =>
+                        msg.id === assistantID
+                            ? { ...msg, pii: result ?? [], isLoading: false }
+                            : msg
+                    )
                 )
-            )
+            } else {
+                // Handle structured error response
+                const errorData = await response.json()
+                throw new Error(errorData.error)
+            }
         } catch (error) {
             setMessages(prev =>
                 prev.map(msg =>
