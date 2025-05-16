@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useState, useContext } from 'react';
-import { Message, isChatMessage, ChatRole, MessageType, isFileMessage, PII, PIIType, ChatMessage } from '@/types';
+import { Message, isChatMessage, ChatRole, MessageType, isFileMessage, ChatMessage } from '@/types';
 
 export type MessageContextType = {
     messages: Message[];
@@ -97,19 +97,30 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
             }
             setMessages(prev => [...prev, assistantMessage])
 
-            // TODO: Replace with API call
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            setMessages(prev =>
-                prev.map(msg =>
-                    msg.id === assistantMessage.id
-                        ? {
-                            ...msg,
-                            content: `This is a test response. Here is your content: ${content}`,
-                            isLoading: false
-                        }
-                        : msg
+            const response = await fetch('/api/interpret/message', {
+                method: 'POST',
+                body: JSON.stringify({ content })
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+
+                // Update assistant message with final content
+                setMessages(prev =>
+                    prev.map(msg =>
+                        msg.id === assistantMessage.id
+                            ? {
+                                ...msg,
+                                content: data.text,
+                                isLoading: false
+                            }
+                            : msg
+                    )
                 )
-            )
+            } else {
+                const errorData = await response.json()
+                throw new Error(errorData.error)
+            }
         } catch (error) {
             setMessages(prev =>
                 prev.map(msg =>
