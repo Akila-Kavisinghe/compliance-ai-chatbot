@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Send, Paperclip } from 'lucide-react'
 import { useMessage } from '@/context/MessageContext'
-import { ChatRole, FileMessage, MessageType } from '@/types'
+import { ChatRole, MessageType } from '@/types'
 
 export const MessageInput = () => {
     const [input, setInput] = useState('')
@@ -106,7 +106,7 @@ export const MessageInput = () => {
                             disabled={isLoading}
                             className="block w-full resize-none border-0 bg-transparent py-3 px-4 pr-24 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 disabled:opacity-50 rounded-xl border border-gray-200 shadow-sm focus:border-indigo-500 focus:outline-none transition-all duration-200"
                         />
-                        <div className="absolute right-3 bottom-3 flex items-center space-x-2">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2">
                             <input
                                 ref={fileInputRef}
                                 type="file"

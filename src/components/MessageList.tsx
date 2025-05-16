@@ -109,7 +109,7 @@ export const MessageList = () => {
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-gray-800 mb-2">PII AI Detector Bot</h2>
           <p className="text-gray-600">
-            Start a conversation or drag and drop a file to for instant analysis
+            Start a conversation or drag and drop a file for instant analysis
           </p>
         </div>
       </div>
