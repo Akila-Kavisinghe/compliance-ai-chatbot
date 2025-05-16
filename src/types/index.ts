@@ -1,9 +1,9 @@
+
+// Base Message Type
 export enum MessageType {
     FILE = 'file',
     CHAT = 'chat'
 }
-
-// Base message type
 export type BaseMessage = {
     id: string
     timestamp: number
@@ -11,6 +11,7 @@ export type BaseMessage = {
     isLoading?: boolean
 }
 
+// File Message Types
 export enum PIIType {
     EMAIL = 'EMAIL',
     PHONE = 'PHONE',
@@ -23,18 +24,17 @@ export type PII = {
     type: PIIType,
     page: number,
 }
-// File message type
 export type FileMessage = BaseMessage & {
     type: MessageType.FILE
     file: File
     pii: PII[]
 }
 
+// Chat Messages Types
 export enum ChatRole {
     USER = 'user',
     ASSISTANT = 'assistant'
 }
-// Chat message type
 export type ChatMessage = BaseMessage & {
     type: MessageType.CHAT
     content: string
