@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Setup
 
-## Getting Started
+In the root directory, run the following command to set up the project:
 
-First, run the development server:
+## Install dependencies
+```bash
+npm install
+```
 
+## Environment Variables
+
+Create a `.env` file in the root directory with the following:
+```
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_generative_ai_api_key
+```
+
+You can retrieve your Google Generative AI API key from the [Google Cloud Console](https://console.cloud.google.com).
+
+## Run the development server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+
+## Opening the app
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Overview
 
-## Learn More
+The application is built with Next.js App Router and Next.js API Routes.
 
-To learn more about Next.js, take a look at the following resources:
+it uses the following technologies:
+- Next.js (Frontend)
+- Next.js API Routes (Backend)
+- Tailwind CSS (Styling)
+- Lucide Icons (Icons)
+- Verecel AI SDK (AI SDK)
+- Google Generative AI API (LLM) (Note: I would like to test different LLMs, but the Google Generative AI API has a generous free tier)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Implemented Tool Functions
+## PII Detection
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Used the vercel ai sdk to implement PII detection. The API Route is implemented as a Next.js serverless function. It accepts a file (PDF or image) upload and returns a list of PIIs detected in the file.
 
-## Deploy on Vercel
+interpretFile.ts is the main service function that implements the PII detection. It uses the `generateText` function to interact with the model. The LLM is configured to use the `validatePII` tool to validate the PIIs detected in the file which utilizes general regex patterns to validate various PIIs. This regex validation acts like a filter to remove LLM false positives.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Design decisions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### React Context API
+
+Used the React Context API to store the messages in the chat. Every conversation would be stored in this context. Any context is passed to the LLM via the client to allow the backend to be stateless.
+
+### Chat System
+
+Instead of opting for the useChat hook provided by the vercel ai sdk, I opted to implement my own hook to have more flexibility on the message format.
+
+###  Next.js API Routes
+
+Used Next.js API Routes since they are a great way to implement serverless functions in Next.js.
+
+# Future Improvements
+
+## Chat History - Add a chat history to the app
+
+## LLM Text Streaming - Stream the LLM response to the user
+
+## PII Detection - Iterate on detection prompts and test other LLMs for best fit.
+
+## Chat Storage - Store chat history in a database
+

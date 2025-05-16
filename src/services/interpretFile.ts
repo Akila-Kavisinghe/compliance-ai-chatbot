@@ -109,7 +109,7 @@ export async function interpretFile(file: File): Promise<PII[]> {
                     type: z.nativeEnum(PIIType).describe('The type of PII'),
                     page: z.number().describe('The page number of the PII')
                 }),
-                execute: async (params) => validatePIIValue(params, piis)
+                execute: async (pii: PII) => validatePIIValue(pii, piis)
             }),
         },
         toolChoice: 'required',
